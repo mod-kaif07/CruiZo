@@ -1,44 +1,51 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { UserDataContext } from "../context/UserContext";
+
 const UserSign = () => {
-  const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    password: ""
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  const navigate = useNavigate();
 
-  const submitHandler = (e) => {
+  const { userdata, setuserdata } = useContext(UserDataContext);
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    
-    const userData = {
+
+    const newUser = {
       fullname: {
-        firstname: formData.firstname,
-        lastname: formData.lastname
+        firstname: firstName,
+        lastname: lastName,
       },
-      email: formData.email,
-      password: formData.password
+      email: email,
+      password: password,
     };
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/users/register`,
+        newUser
+      );
+      if (response.status == 201) {
+        const data = response.data;
+        console.log(data);
+        setuserdata(data.User);
+        navigate("/home");
+      }
 
-    console.log("User Registration Data:", userData);
-    
-    // Reset form
-    setFormData({
-      firstname: "",
-      lastname: "",
-      email: "",
-      password: ""
-    });
+      // Reset form
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+    } catch (error) {
+      console.error("Registration error:", error);
+      alert("Registration failed. Please try again.");
+    }
   };
-
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
@@ -68,19 +75,19 @@ const UserSign = () => {
                 <input
                   type="text"
                   name="firstname"
-                  value={formData.firstname}
-                  onChange={handleChange}
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                   placeholder="First name"
                   className="w-full px-4 py-3 text-sm bg-gray-100 border-0 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:bg-white transition-all rounded-xl"
                   minLength={3}
                   required
                 />
-                
+
                 <input
                   type="text"
                   name="lastname"
-                  value={formData.lastname}
-                  onChange={handleChange}
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                   placeholder="Last name"
                   className="w-full px-4 py-3 text-sm bg-gray-100 border-0 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:bg-white transition-all rounded-xl"
                   minLength={3}
@@ -90,8 +97,8 @@ const UserSign = () => {
               <input
                 type="email"
                 name="email"
-                value={formData.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email address"
                 className="w-full px-4 py-3 text-sm bg-gray-100 border-0 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:bg-white transition-all rounded-xl"
                 minLength={5}
@@ -101,8 +108,8 @@ const UserSign = () => {
               <input
                 type="password"
                 name="password"
-                value={formData.password}
-                onChange={handleChange}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 className="w-full px-4 py-3 text-sm bg-gray-100 border-0 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:bg-white transition-all rounded-xl"
                 minLength={6}
@@ -111,6 +118,7 @@ const UserSign = () => {
             </div>
 
             <button
+              type="submit"
               onClick={submitHandler}
               className="w-full bg-black text-white py-4 rounded-2xl font-medium text-lg hover:bg-gray-800 transition-all active:scale-98 mt-6"
             >

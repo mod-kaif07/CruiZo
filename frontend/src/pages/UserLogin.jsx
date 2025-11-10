@@ -1,20 +1,42 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserDataContext } from "../context/UserContext";
+import axios from "axios";
 
 const UserLogin = () => {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const [userdta, setuserdta] = useState({});
-  
-  const summitHnadler = (e) => {
+
+  const navigate = useNavigate();
+
+  const { userdata, setuserdata } = useContext(UserDataContext);
+
+  const summitHnadler = async (e) => {
     e.preventDefault();
-    setuserdta({
+    const loginData = {
       email: email,
       password: password,
-    });
-    console.log(userdta);
-    setemail("");
-    setpassword("");
+    };
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/users/login`,
+        loginData
+      );
+
+      if (response.status == 200) {
+        const data = response.data;
+
+        setuserdata(data.User);
+        navigate("/home");
+      }
+      setemail("");
+      setpassword("");
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Login failed. Please check your credentials.");
+    }
   };
 
   return (
