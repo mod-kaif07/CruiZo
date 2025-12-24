@@ -31,7 +31,7 @@ const UserSign = () => {
       );
       if (response.status == 201) {
         const data = response.data;
-        console.log(data);
+        localStorage.setItem("userToken", data.token);
         setuserdata(data.User);
         navigate("/home");
       }
@@ -50,12 +50,11 @@ const UserSign = () => {
     <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
       <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
-        <div className="w-20 h-30 lg:mx-70 flex items-center">
-          <img
-            className="w-24 md:w-32 mt-6 ml-4 "
-            src="https://freelogopng.com/images/all_img/1659761100uber-logo-png.png"
-            alt="logo"
-          />
+        <div className="w-20 h-30 pl-5.5 mt-3.5 lg:mx-70 flex items-center">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl leading-tight">
+            <span className="font-extrabold text-gray-900">Crui</span>
+            <span className="font-light text-indigo-600">Zo</span>
+          </h1>
         </div>
       </div>
 

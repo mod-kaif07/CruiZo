@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { CaptainDataContext } from '../context/CaptainContext';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const CaptainSign = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -12,24 +16,26 @@ const CaptainSign = () => {
     vehicleColor: "",
     plateNumber: "",
     capacity: "",
-    vehicleType: "car"
+    vehicleType: "car",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const submitHandler = (e) => {
+  const { captain, setCaptain } = React.useContext(CaptainDataContext);
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    
+
     const captainData = {
       fullname: {
         firstname: formData.firstname,
-        lastname: formData.lastname
+        lastname: formData.lastname,
       },
       email: formData.email,
       password: formData.password,
@@ -39,12 +45,22 @@ const CaptainSign = () => {
         color: formData.vehicleColor,
         platenumber: formData.plateNumber,
         capacity: parseInt(formData.capacity),
-        vechiletype: formData.vehicleType
-      }
+        vechiletype: formData.vehicleType,
+      },
     };
 
     console.log("Captain Registration Data:", captainData);
-    
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/captains/registerCaptain`,
+      captainData
+    );
+    if (response.status === 201) {
+      const data = response.data;
+      setCaptain(data.captain);
+      localStorage.setItem("c-token", data.token);
+      navigate("/captain-home");
+    }
+
     // Reset form
     setFormData({
       firstname: "",
@@ -56,7 +72,7 @@ const CaptainSign = () => {
       vehicleColor: "",
       plateNumber: "",
       capacity: "",
-      vehicleType: "car"
+      vehicleType: "car",
     });
   };
 
@@ -89,7 +105,7 @@ const CaptainSign = () => {
               <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
                 Personal Information
               </h2>
-              
+
               <div className="grid grid-cols-2 gap-3">
                 <input
                   type="text"
@@ -101,7 +117,7 @@ const CaptainSign = () => {
                   minLength={3}
                   required
                 />
-                
+
                 <input
                   type="text"
                   name="lastname"

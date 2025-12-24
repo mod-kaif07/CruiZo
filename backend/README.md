@@ -411,3 +411,28 @@ _Examples of other validation errors:_
 - The password is automatically hashed before storing
 - A JWT authentication token is generated upon successful registration
 - Email addresses must be unique in the system
+
+## Routes & Controllers
+
+- **User routes**: backend/routes/user.routes.js
+
+  - POST `/register` -> controllers/user.controller.js (validation: email, fullname.firstname, password)
+  - POST `/login` -> controllers/user.controller.js (validation: email, password)
+  - GET `/profile` -> controllers/user.controller.js (protected by `authUser` middleware)
+  - GET `/logout` -> controllers/user.controller.js (protected by `authUser`, blacklists token)
+
+- **Captain routes**: backend/routes/captain.routes.js
+
+  - POST `/registerCaptain` -> controllers/captain.controller.js (validation: fullname.firstname, email, password, licenseNumber, phoneNumber, vechile.\*)
+  - POST `/loginCaptain` -> controllers/captain.controller.js (validation: email, password)
+  - GET `/captainProfile` -> controllers/captain.controller.js (protected by `authCaptain` middleware)
+  - GET `/logoutCaptain` -> controllers/captain.controller.js (protected by `authCaptain`, blacklists token)
+
+- **Middlewares**:
+  - `authUser` (backend/middlewares/auth.middleware.js) — verifies JWT from cookie `token` or `Authorization: Bearer <token>` header; checks blacklist collection before allowing access.
+  - `authCaptain` (backend/middlewares/auth.middleware.js`) — same behavior for captain tokens.
+
+Notes:
+
+- Route validation is implemented using `express-validator` in the route definitions.
+- Blacklisted tokens are stored in `models/blacklistToken.model.js` to prevent reuse after logout.
