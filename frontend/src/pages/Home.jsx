@@ -4,6 +4,9 @@ import gsap from "gsap";
 import "remixicon/fonts/remixicon.css";
 import LocationSearchPanel from "../Components/LocationSearchPanel";
 import DiffrentvechileOption from "../Components/DiffrentvechileOption";
+import ConfirmRide from "../Components/ConfirmRide";
+import LookingforDriver from "../Components/LookingforDriver";
+import WaitingforDriver_panel from "../Components/WaitingforDriver_panel";
 
 const Home = () => {
   const [pickup, setPickup] = useState("");
@@ -12,6 +15,12 @@ const Home = () => {
   const panelref = useRef(null);
   const [vechilepanal, setVechilepanal] = useState(false);
   const Vechilepanaelref = useRef(null);
+  const [confirmRidepanel, setConfirmRidepanel] = useState(false);
+  const confirmRidpaneleRef = useRef(null);
+  const [vechileFound, setVechileFound] = useState(false);
+  const VechilefoundRef = useRef("");
+  const [WatingForDriver, setWatingForDriver] = useState(false);
+  const WatingForDriverRef = useRef();
 
   const submmithandler = (e) => {
     e.preventDefault();
@@ -40,13 +49,55 @@ const Home = () => {
     [vechilepanal]
   );
 
+  useGSAP(
+    function () {
+      if (confirmRidepanel) {
+        gsap.to(confirmRidpaneleRef.current, {
+          transform: "translateY(0%)",
+        });
+      } else {
+        gsap.to(confirmRidpaneleRef.current, {
+          transform: "translateY(100%)",
+        });
+      }
+    },
+    [confirmRidepanel]
+  );
+
+  useGSAP(
+    function () {
+      if (vechileFound) {
+        gsap.to(VechilefoundRef.current, {
+          transform: "translateY(0%)",
+        });
+      } else {
+        gsap.to(VechilefoundRef.current, {
+          transform: "translateY(100%)",
+        });
+      }
+    },
+    [vechileFound]
+  );
+
+  useGSAP(
+    function () {
+      if (WatingForDriver) {
+        gsap.to(WatingForDriverRef.current, {
+          transform: "translateY(0%)",
+        });
+      } else {
+        gsap.to(WatingForDriverRef.current, {
+          transform: "translateY(100%)",
+        });
+      }
+    },
+    [WatingForDriver]
+  );
+
   return (
     <div className="min-h-screen relative">
       {/* 🗺️ Map */}
-      <div
-        className="flex-1 w-full object-cover "
-        
-      >
+      <div className="flex-1 w-full object-cover ">
         <img
           src="https://miro.medium.com/v2/resize:fit:1100/format:webp/0*gwMx05pqII5hbfmX.gif"
           alt="Map"
@@ -57,13 +108,19 @@ const Home = () => {
       <div className="flex flex-col justify-end h-screen absolute top-1 mb-2.5 w-full  ">
         {/* White panel */}
         <div className="h-[35%] p-5 bg-white">
-          <div className="flex items-center">
-            <i
-              className="ri-arrow-down-double-line text-2xl cursor-pointer"
-              onClick={() => setPanelopen(false)} // ✅ close on arrow click
-            ></i>
-
+          <div className="flex justify-between items-center">
             <h4 className="text-3xl font-semibold ml-3 mt-2">Find a Trip</h4>
+            {!panelopen ? (
+              <i
+                className="ri-arrow-up-s-line text-2xl pr-8 cursor-pointer"
+                onClick={() => setPanelopen(true)}
+              ></i>
+            ) : (
+              <i
+                className="ri-arrow-down-s-line text-2xl pr-8 cursor-pointer"
+                onClick={() => setPanelopen(false)}
+              ></i>
+            )}
           </div>
 
           <form className="px-3" onSubmit={submmithandler}>
@@ -88,10 +145,7 @@ const Home = () => {
         </div>
 
         {/* Red panel */}
-        <div
-          ref={panelref}
-          className="bg-white h-0  overflow-hidden "
-        >
+        <div ref={panelref} className="bg-white h-0  overflow-hidden ">
           <div
             onClick={() => setPanelopen(false)}
             className="w-12 h-1 bg-black rounded-full mx-auto mb-4 cursor-pointer"
@@ -108,7 +162,34 @@ const Home = () => {
         ref={Vechilepanaelref}
         className="fixed w-full z-10 bottom-0   translate-y-full bg-white p-5"
       >
-        <DiffrentvechileOption vechilepanal={vechilepanal} setVechilepanal={setVechilepanal}  />
+        <DiffrentvechileOption
+          vechilepanal={vechilepanal}
+          setConfirmRidepanel={setConfirmRidepanel}
+          setVechilepanal={setVechilepanal}
+        />
+      </div>
+      <div
+        ref={confirmRidpaneleRef}
+        className="fixed w-full z-10 bottom-0   translate-y-full bg-white p-5"
+      >
+        <ConfirmRide
+          setConfirmRidepanel={setConfirmRidepanel}
+          setVechileFound={setVechileFound}
+        />
+      </div>
+
+      <div
+        ref={VechilefoundRef}
+        className="fixed w-full z-10 bottom-0   translate-y-full bg-white p-5"
+      >
+        <LookingforDriver setVechileFound={setVechileFound} />
+      </div>
+
+      <div
+        ref={WatingForDriverRef}
+        className="fixed w-full z-10 bottom-0   bg-white p-5"
+      >
+        <WaitingforDriver_panel setWatingForDriver={setWatingForDriver} />
       </div>
     </div>
   );
