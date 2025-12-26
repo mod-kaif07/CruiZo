@@ -96,26 +96,5 @@ See backend README for API details: [backend/README.md](backend/README.md)
 - Do not modify existing backend README: [backend/README.md](backend/README.md)  
 - Backend auth uses JWT and token blacklisting: see [backend/models/blacklistToken.model.js](backend/models/blacklistToken.model.js) and [backend/middlewares/auth.middleware.js](backend/middlewares/auth.middleware.js)
 
-// ...existing code...
-{
-  "scripts": {
-    ...existing code...
-    "start": "node server.js",
-    "dev": "npx nodemon server.js"
-  }
-}
-// ...existing code...
 
 
-{
-  "name": "uber-project",
-  "private": true,
-  "scripts": {
-    "start": "concurrently \"npm:backend-dev\" \"npm:frontend-dev\"",
-    "backend-dev": "cd backend && npx nodemon server.js",
-    "frontend-dev": "cd frontend && npm run dev"
-  },
-  "devDependencies": {
-    "concurrently": "^8.0.0"
-  }
-}
